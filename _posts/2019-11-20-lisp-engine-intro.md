@@ -98,13 +98,9 @@ for (int i = 1; i <= 30; i++) {
 
 ```scala
 def sum(until: Int) = {
-
   @tailrec
-
   def loop(acc: Int, num: Int) = if (num == 0) acc else loop(acc + num, num - 1)
-
   loop(0, until)
-
 }
 // or
 (1 to 30).foldLeft(0)(_ + _)
@@ -144,9 +140,7 @@ Lisp code -> [Lexer] -> Tokens -> [Parser] -> AST -> [Execution Engine] -> Execu
 이번 시리즈에서는 리습 엔진을 만들어볼 예정입니다. 본 시리즈에서는 Scala를 주 언어로 활용할 것이며, 크게 다음의 세 파트로 나뉩니다.
 
 - Lexer
-
 - Parser
-
 - Execution
 
 본 시리즈의 예제들을 따라하다보면, Lisp 실행기가 만들어지도록 본문을 구성해보겠지만... 자세한 사항은 https://github.com/gkm2164/lengine 의 소스코들 살펴보시면 될 것 같습니다.
