@@ -67,7 +67,7 @@ author:
       icon: "fas fa-fw fa-link"
       url: "https://blog.gyeongmin.co"
     - label: "Facebook"
-      icon: "fas fa-fw fa-facebook"
+      icon: "fab fa-fw fa-facebook-square"
       url: "https://facebook.com/gyeongmin.imply"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
@@ -117,3 +117,8 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+comments:
+  provider: "disqus"
+  disqus:
+    shortname: "gmgo-blog"
