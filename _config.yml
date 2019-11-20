@@ -23,6 +23,7 @@ twitter_username: gkm2164
 github_username: gkm2164
 minimal_mistakes_skin: default
 search: true
+repository: gkm2164/blog-website
 
 # Build settings
 markdown: kramdown
