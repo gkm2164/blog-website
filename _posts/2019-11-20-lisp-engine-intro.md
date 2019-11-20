@@ -53,12 +53,14 @@ Lexer는 사용자가 작성한 코드의 어휘들을 식별하는 작업을 �
 이렇게 되면, 언어의 이면이 보이기 때문에 다른 언어를 마주치더라도 어떤 맥락에서 이것이 등장하는지, 어떤 것을 표현하고자 하는것인지 등이 파악되면 새로운 언어를 마주하더라도 당황하지 않게 됩니다. 그리고, 각 언어가 지닌 패턴들을 이해하는데 큰 도움이 되죠. 아래를 살펴봅시다.
 
 * 파이썬 코드
+
 ```python
 for x in somelist:
   print ("item {}" % x)
 ```
 
 * 스칼라 코드
+
 ```scala
 for (x <- somelist) {
   println(s"item $x")
@@ -66,6 +68,7 @@ for (x <- somelist) {
 ```
 
 * C 코드
+
 ```c++
 for (int i = 0; i < somelistLen; i++) {
   printf("item %s\n", somelist[i]);
@@ -73,6 +76,7 @@ for (int i = 0; i < somelistLen; i++) {
 ```
 
 * Lisp - might Lengine
+
 ```lisp
 (loop for x in somelist
   (println (concat "item " (str x))))
@@ -86,6 +90,7 @@ for (int i = 0; i < somelistLen; i++) {
 아래의 예는 1부터 30까지 더하는 연산입니다.
 
 * C++ or Java
+
 ```c++
 int sum = 0;
 for (int i = 1; i <= 30; i++) {
@@ -94,6 +99,7 @@ for (int i = 1; i <= 30; i++) {
 ```
 
 * Functional approach, Scala
+
 ```scala
 def sum(until: Int) = {
   @tailrec
