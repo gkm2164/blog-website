@@ -139,4 +139,4 @@ Lisp code -> [Lexer] -> Tokens -> [Parser] -> AST -> [Execution Engine] -> Execu
 - Parser
 - Execution
 
-본 시리즈의 예제들을 따라하다보면, Lisp 실행기가 만들어지도록 본문을 구성해보겠지만... 자세한 사항은 https://github.com/gkm2164/lengine 의 소스코들 살펴보시면 될 것 같습니다.
+본 시리즈의 예제들을 따라하다보면, Lisp 실행기가 만들어지도록 본문을 구성해보겠지만... 자세한 사항은 [소스코드](https://github.com/gkm2164/lengine) 의 소스코들 살펴보시면 될 것 같습니다.
