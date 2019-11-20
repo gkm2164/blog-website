@@ -1,6 +1,11 @@
 ---
 layout: single
 title: "New Posting"
+categories:
+	- Blog
+tags:
+	- New post
+	- LISP code
 --- 
 
 # Welcome
