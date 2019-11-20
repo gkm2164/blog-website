@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "New Posting"
+title: New Posting
 date: 2019-11-20T12:37:00-17:00
 categories:
 	- Blog
