@@ -63,51 +63,40 @@ for x in somelist:
 for (x <- somelist) {
   println(s"item $x")
 }
-````
+```
 
 C 코드
-```c
+```c++
 for (int i = 0; i < somelistLen; i++) {
   printf("item %s\n", somelist[i]);
 }
 ```
 
-
 #Lisp - might Lengine
 
+```lisp
 (loop for x in somelist
-
-           (println (concat "item " (str x))))
-
-
+  (println (concat "item " (str x))))
+```
 
 위를 보시면 아시겠지만, 반복문을 표현하는 방식들이 매우 다양합니다. 언어들이 다르더라도 반복문의 핵심은 somelist라는 리스트에서 원하는 것들을 꺼내어 적당한 작업을 하고 되돌려주는 일을 합니다.
-
-
 
 3) 사고력 향상
 이상의 것들은 사고력을 기르는데 한몫을 합니다. 생각하는 방식을 바꾼다는 말이 매우 거창하게 들릴 수 있지만, 프로그래머 입장에서는 한가지 문제를 다양한 방식으로 풀어볼 수 있다는 것이 매우 중요합니다. 마치, 수학문제, 과학문제, 심지어 사회문제들도 한가지 방식으로 해결하지 않음을 알 수 있습니다.
 
 아래의 예는 1부터 30까지 더하는 연산입니다.
 
-
-
 #C++ or Java
-
+```c++
 int sum = 0;
-
 for (int i = 1; i <= 30; i++) {
-
   sum += i;
-
 }
-
-
+```
 
 #Functional approach, Scala
 
-
-
+```scala
 def sum(until: Int) = {
 
   @tailrec
@@ -117,14 +106,10 @@ def sum(until: Int) = {
   loop(0, until)
 
 }
-
 // or
-
 (1 to 30).foldLeft(0)(_ + _)
-
 //
-
-
+```
 
 본 게시글은 함수형언어의 소개가 아니기 때문에 foldLeft에 대한 자세한 설명은 하지 않겠습니다. 간략하게 설명드리자면, 위 구문은, (1 to 30).foldLeft(0)((acc, elem) => acc + elem) 입니다. 의미는 1부터 30까지의 range sequence가 있을 때, acc에 1부터 30까지의 시퀀스 안에 있는 엘리먼트들을 모두 더하는 것입니다. sum 함수 안의 loop함수와 같다고 보시면 될 것 같습니다.
 
@@ -132,57 +117,36 @@ def sum(until: Int) = {
 
 한편, C언어에서도 tail recursion 방식을 사용할 수도 있습니다.
 
-
-
+```c
 int sum(int acc, int elem) {
-
   if (elem == 0) return acc;
-
   else return sum(acc + elem, elem - 1);
-
 }
-
-
 
 int main () {
-
   sum(0, 30);
-
 }
-
-
+```
 
 4) 요약
 이상에서 말씀드리고자 하는 것이 사실상 3인데, 언어에 대한 이해를 높이면, 그 언어가 가진 프로그래밍 패러다임을 이해하는데 도움이 되고, 문제를 푸는데 한가지 방식만이 아닌, 여러 방식으로 표현하는 법을 배움으로써, 어떤 문제를 어떻게 풀어야 효과적으로 접근할 수 있는지를 결정하는데 큰 도움이 됩니다. 그리고 그 언어의 이해를 높이는 한가지 방법으로, 이 언어들이 어떻게 처리되는지를 알게 됨으로써, 각 언어들이 가진 어떤 표현의 한계등을 파악하는데 매우 효과적일 수 있다는 점이 있습니다.
 
-
-
 접근방법
 LISP 언어 처리기를 만드는데, 다음의 접근 방법을 활용해보고자 합니다. 우선, 이 글에서는 주어진 LISP구문을 실행하는 실행기를 만들어볼 것입니다. 컴퓨터가 이해할 수 있는 컴파일 언어로의 생성은 다른 포스팅에서 다뤄보도록 하겠습니다. 이 글에서는 그냥 실행 가능한 프로그램입니다. 그리고, 실행만 하면 아까우니, REPL을 만들어봄으로써, 좀 더 interactive하게 해당 구문 처리기를 활용하는 방법에 대해서도 논의해보겠습니다.
-
-
 
 언어 처리기의 구조는 다음과 같습니다.
 
 Lisp code -> [Lexer] -> Tokens -> [Parser] -> AST -> [Execution Engine] -> Execute!
 
-
-
 그리고, 시간이 된다면, 그리고 제가 만약 만들게 된다면 Optimize를 넣는 작업도 해볼 것입니다만, 우선 대괄호 안의 Lexer, Parser, Execution Engine만을 만들어보도록 하겠습니다.
-
-
 
 시리즈 구성
 이번 시리즈에서는 리습 엔진을 만들어볼 예정입니다. 본 시리즈에서는 Scala를 주 언어로 활용할 것이며, 크게 다음의 세 파트로 나뉩니다.
-
-
 
 - Lexer
 
 - Parser
 
 - Execution
-
-
 
 본 시리즈의 예제들을 따라하다보면, Lisp 실행기가 만들어지도록 본문을 구성해보겠지만... 자세한 사항은 https://github.com/gkm2164/lengine 의 소스코들 살펴보시면 될 것 같습니다.
