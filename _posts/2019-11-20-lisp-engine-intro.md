@@ -52,31 +52,27 @@ Lexer는 사용자가 작성한 코드의 어휘들을 식별하는 작업을 �
 
 이렇게 되면, 언어의 이면이 보이기 때문에 다른 언어를 마주치더라도 어떤 맥락에서 이것이 등장하는지, 어떤 것을 표현하고자 하는것인지 등이 파악되면 새로운 언어를 마주하더라도 당황하지 않게 됩니다. 그리고, 각 언어가 지닌 패턴들을 이해하는데 큰 도움이 되죠. 아래를 살펴봅시다.
 
-* 파이썬 코드
-
+### 파이썬 코드
 ```python
 for x in somelist:
   print ("item {}" % x)
 ```
 
-* 스칼라 코드
-
+### 스칼라 코드
 ```scala
 for (x <- somelist) {
   println(s"item $x")
 }
 ```
 
-* C 코드
-
+### C 코드
 ```c++
 for (int i = 0; i < somelistLen; i++) {
   printf("item %s\n", somelist[i]);
 }
 ```
 
-* Lisp - might Lengine
-
+### Lisp - might Lengine
 ```lisp
 (loop for x in somelist
   (println (concat "item " (str x))))
@@ -89,8 +85,7 @@ for (int i = 0; i < somelistLen; i++) {
 
 아래의 예는 1부터 30까지 더하는 연산입니다.
 
-* C++ or Java
-
+### C++ or Java
 ```c++
 int sum = 0;
 for (int i = 1; i <= 30; i++) {
@@ -98,8 +93,7 @@ for (int i = 1; i <= 30; i++) {
 }
 ```
 
-* Functional approach, Scala
-
+### Functional approach, Scala
 ```scala
 def sum(until: Int) = {
   @tailrec
@@ -111,10 +105,11 @@ def sum(until: Int) = {
 //
 ```
 
-본 게시글은 함수형언어의 소개가 아니기 때문에 foldLeft에 대한 자세한 설명은 하지 않겠습니다. 간략하게 설명드리자면, 위 구문은, (1 to 30).foldLeft(0)((acc, elem) => acc + elem) 입니다. 의미는 1부터 30까지의 range sequence가 있을 때, acc에 1부터 30까지의 시퀀스 안에 있는 엘리먼트들을 모두 더하는 것입니다. sum 함수 안의 loop함수와 같다고 보시면 될 것 같습니다.
+본 게시글은 함수형언어의 소개가 아니기 때문에 foldLeft에 대한 자세한 설명은 하지 않겠습니다. 간략하게 설명드리자면, 위 구문은, ```(1 to 30).foldLeft(0)((acc, elem) => acc + elem)``` 입니다. 의미는 1부터 30까지의 range sequence가 있을 때, acc에 1부터 30까지의 시퀀스 안에 있는 엘리먼트들을 모두 더하는 것입니다. sum 함수 안의 loop함수와 같다고 보시면 될 것 같습니다.
 
 한편, C언어에서도 tail recursion 방식을 사용할 수도 있습니다.
 
+### C with tail recursion
 ```c
 int sum(int acc, int elem) {
   if (elem == 0) return acc;
