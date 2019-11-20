@@ -1,10 +1,7 @@
 ---
-title: "LISP 엔진 만들기"
+title: "LISP 엔진 만들기 - 서론"
 categories:
-  - Programming
-  - LISP
-  - Scala
-  - Functional Programming
+  - Lengine
 tags:
   - Scala
   - Coding
