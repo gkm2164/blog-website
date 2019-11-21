@@ -74,12 +74,7 @@ def tokenize(code: String): List[String] = {
   @tailrec
   def loop(acc: Vector[String], buf: StringBuilder, remains: List[Char]): List[String] = remains match {
     case Nil => acc.toList
-    case ' ' :: tail if buf.isEmpty => loop(acc, buf, tail)
-    case ' ' :: tail => loop(acc :+ buf.toString, new StringBuilder(), tail)
-    case '(' :: tail if buf.isEmpty => loop(acc :+ "("), buf, tail)
-    case '(' :: tail => loop(acc :+ buf.toString, "("), new StringBuilder(), tail)
-    case ')' :: tail if buf.isEmpty => loop(acc :+ ")", buf, tail)
-    case ')' :: tail => loop(acc :+ buf.toString :+ ")", new StringBuilder(), tail)
+    ...
     case '"' :: tail => 
       val (str, remains) = takeString(new StringBuilder(), tail)
       loop(acc :+ str, new StringBuilder, tail)
@@ -98,3 +93,27 @@ def tokenize(code: String): List[String] = {
 ```
 
  중요한 것은, 따옴표가 문자 그대로의 따옴표로 쓰였을 경우에 대한 처리가 필요합니다. 말그대로 escaping을 말하는 것인데요, 이것 또한 패턴매칭으로 표현할 수 있습니다. 그리고, 문자열 인식 함수는 마지막에 문자열로 취하고 남은 토큰을 되돌려줘야 합니다. takeString에 escape란 변수를 추가하여, 이에 따라 반응하게 해봅시다. 그리고 escape character는 ```\``` 로 합시다.
+
+```scala
+def tokenize(code: String): List[String] = {
+  ...
+  // 생략
+  @tailrec
+  def takeString(acc: StringBuilder, remains: List[Char], escape: Boolean = false): (String, List[Char]) = remains match {
+    case Nil => (acc.toString, Nil)
+    case '"' :: tail if escape => takeString(acc.append('"'), tail, false)
+    case '"' :: tail => (acc.append('"').toString, tail)
+    case '\\':: tail if escape => takeString(acc, tail, true)
+    case '\\':: tail => takeString(acc.append('\\'), tail, false)
+    case ch :: tail => takeString(acc.append(ch), tail)
+  }
+  //생략
+  ...
+}
+ ```
+
+이렇게 하면 쌍따옴표 안의 문자열을 하나의 토큰으로 인식하는 코드를 만들 수 있습니다.
+
+이제 Tokenizer를 만들었으니, 이 다음 포스팅에서는 분류된 토큰들을 식별하는 코드를 만들어보도록 하겠습니다.
+
+참고로 이것은 설명을 용이하게 하기 위한 코드이고, 앞으로 개선해야할 사항이 많습니다. 예를들어서, REPL같은 경우는 앞으로 입력될 input 또한 코드의 일부라고 간주해야하기 때문에, List가 아닌 Infinite stream을 써야합니다. 그리고, 토큰을 하나씩 가져올 때 next()와 같이 iterator를 써야 하는 상황이죠. 이런 세련된 표현은 후에 살펴보도록 하겠습니다.
