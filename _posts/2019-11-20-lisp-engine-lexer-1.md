@@ -70,25 +70,27 @@ def tokenize(code: String): List[String] = {
 이 로직을 추가 한 tokenize의 모양은 다음과 같습니다.
 
 ```scala
-def tokenize(code: String): List[String] = {
-  @tailrec
-  def loop(acc: Vector[String], buf: StringBuilder, remains: List[Char]): List[String] = remains match {
-    case Nil => acc.toList
-    ...
-    case '"' :: tail => 
-      val (str, remains) = takeString(new StringBuilder(), tail)
-      loop(acc :+ str, new StringBuilder, tail)
-    case ch :: tail => loop(acc, buf.append(ch), tail)
-  }
+object Tokenizer {
+  def tokenize(code: String): List[String] = {
+    @tailrec
+    def loop(acc: Vector[String], buf: StringBuilder, remains: List[Char]): List[String] = remains match {
+      case Nil => acc.toList
+      ...
+      case '"' :: tail => 
+        val (str, remains) = takeString(new StringBuilder(), tail)
+        loop(acc :+ str, new StringBuilder, tail)
+      case ch :: tail => loop(acc, buf.append(ch), tail)
+    }
 
-  @tailrec
-  def takeString(acc: StringBuilder, remains: List[Char]): (String, List[Char]) = remains match {
-    case Nil => (acc.toString, Nil)
-    case '"' :: tail => (acc.append('"').toString, tail)
-    case ch :: tail => takeString(acc.append(ch), tail)
-  }
+    @tailrec
+    def takeString(acc: StringBuilder, remains: List[Char]): (String, List[Char]) = remains match {
+      case Nil => (acc.toString, Nil)
+      case '"' :: tail => (acc.append('"').toString, tail)
+      case ch :: tail => takeString(acc.append(ch), tail)
+    }
 
-  loop(Nil, new StringBuilder(), code.toList)
+    loop(Nil, new StringBuilder(), code.toList)
+  }
 }
 ```
 
