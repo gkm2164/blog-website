@@ -277,11 +277,11 @@ primes' n = foldl sieve (totalNumbers n) [2..n]
 - 그리고, 어떤 수 n이 없다면, 이미 그보다 작은 약수에 의해 지워진 것입니다. 그리고 이 n의 배수 또한 없습니다. 예를들어, 6이 없다면, 그 다음 수인 12는 이미 2에 의해 지워져있는 셈이지요.
 
 여기서는 재미있는 특징이 있었는데, 주어진 리스트의 첫번째 원소는 검사하는 기준이 됩니다. 그렇다면, head와 tail로 구분하는 패턴매칭을 적용하면 됩니다.
-그 다음, 남은 꼬리 부분에만 filter를 적용합시다.
+그 다음, 남은 꼬리 부분에만 filter를 적용합시다. 한편, 꼬리 부분에는 head 원소가 없으므로, ```x == x'``` 라는 조건문이 없어도 됩니다.
 
 ```hs
 primesLoop (h:xs) = h : primesLoop (filter p xs)
-    where p x = x == h || x `mod`  /= 0
+    where p x = x `mod` h /= 0
 ```
 
 만약 더이상 검색할 수가 남아있지 않다면 비어있는 리스트를 되돌려줍니다.
@@ -304,7 +304,7 @@ primes' n = primeLoop [2..n]
  where
   primeLoop [] = []
   primeLoop (h:xs) = h : primeLoop (filter p xs)
-    where p x = x == h || x `mod` h /= 0
+    where p x = x `mod` h /= 0
 ```
 
 문제는, 이렇게 해도 primes보다 성능이 안나옵니다. 그렇지만, 여기에서 n을 지운다면 무한 소수 스트림을 얻을 수 있습니다.
@@ -315,7 +315,7 @@ primes' = primeLoop [2..]
  where
   primeLoop [] = []
   primeLoop (h:xs) = h : primeLoop (filter p xs)
-    where p x = x == h || x `mod` h /= 0
+    where p x = x `mod` h /= 0
 ```
 
 이상을 갖고, take나 drop을 활용하여 수를 얻어올 수 있습니다.
@@ -347,7 +347,7 @@ takeWhile (<1000) primes'
 (0.04 secs, 4,712,216 bytes)
 ```
 
-허허.. 저도 이거 하다가 놀랐네요.ㅋㅋㅋ
+허허.. 저도 이거 하다가 놀랐네요.ㅋㅋㅋ 이렇게 DP가 쉽게 구현되었습니다.
 
 여튼, 이상입니다.
 다음화에서는 다른 주제로 예시를 만들어보겠습니다.
