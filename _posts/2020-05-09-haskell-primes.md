@@ -18,31 +18,42 @@ tags:
 
 ## 타 언어 살펴보기
 
-우선, 짝수를 구하는 코드를 여러 언어로 살펴보겠습니다. 단순하게, n보다 같거나 작은 수의 짝수를 구하는 코드라 하면, 1 부터 n까지 반복자를 돌면서 2로 나눈 나머지가 0이면 짝수, 그렇지 않다면 홀수가 됩니다.
+우선, 소수를 구하는 코드를 다른 언어들로부터 살펴보겠습니다. 단순하게, n보다 같거나 작은 수의 소수를 구하는 코드라 하면, 1 부터 n까지 반복하면서 각 수의 약수들을 구하고, 약수가 1과 자기자신밖에 없다면 소수로 인식하는 코드입니다.
 
 ```c++
-vector<int> evens(int until) {
-    vector<int> ret(until + 1);
-    for (int i = 1; i <= until; i++) {
-        if (i % 2 == 0) ret.push_back(i);
-        // or if (!(i & 1)) == ret.push_back(i);
+vector<int> primes(int until) {
+    vector<int> ret;
+    for (int i = 2; i <= until; i++) {
+        bool isPrime = true;
+        double sq = sqrt(i);
+        for (int j = 2; j <= sq; j++) { // 1과 자기 자신은 생략합니다.
+            if (i % j == 0) {
+                isPrime = false;
+                break;
+            }
+        }
+        if (isPrime) ret.push_back(i);
     }
     return ret;
 }
 ```
 
-한편, 함수형 언어라 불리우는 스칼라도 비슷하게 줄여줄 수 있습니다.
+한편, 함수형 언어라 불리우는 스칼라는 아래와 같이 작성할 수 있습니다.
 
 ```scala
-def evens(n: Int): List[Int] = (1 to n).filter(_ % 2 == 0)
+def primes(n: Int) = 2 +: (3 to n).filter (x => !(2 until Math.sqrt(x).toInt).exists(x % _ == 0))
 ```
 
-스칼라도 함수형 언어이므로 표현을 간결하게 둘 수 있습니다. 이제 찐 함수형 언어는 어떤지 살펴봅시다.
+스칼라도 함수형 언어이므로 표현을 간결하게 둘 수 있습니다.
+
+이제 찐 함수형 언어는 어떤지 살펴봅시다.
 
 ## 하스켈
 
 하스켈은 Pure functional language라고 부르죠.. 상태가 전혀 없는 함수형 언어입니다.
 특히, 수학의 집합을 표시하는 기호와 많이 닮은 점이 정말로 신기했습니다.
+
+간단하게 예를 들어, 짝수를 구하는 식입니다.
 
 ```haskell
 evens :: Int -> [Int]
@@ -113,26 +124,32 @@ isPrime n = [1, n] == divisors n
 divisors n = [x | x <- [1..n], n `mod` x == 0]
 ```
 
+그렇지만, 1과 n의 비교는 여기에서는 불필요합니다.
+
+```hs
+divisors n = [x | x <- [2..n - 1], n `mod` x == 0]
+```
+
 이 코드들을 조합하면, 네.. 3줄만에 소수를 구할 수 있습니다.
 
 이제 위 코드를 정리하면 아래와 같습니다.
 
 ```haskell
-divisors x = [x' | x' <- [1..x], x `mod` x' = 0]
-isPrime x = [1, x] == divisors x
-primes x = [x | x <- [1..x], prime x]
+divisors x = [x' | x' <- [2..x - 1], x `mod` x' = 0]
+isPrime x = null $ divisors x
+primes x = [x | x <- [2..x], prime x]
 ```
 
 조금 반칙 같으니, 함수의 타입들도 붙여줘봅시다.
 ```hs
 divisors :: Int -> [Int]
-divisors x = [x' | x' <- [1..x], x `mod` x' = 0]
+divisors x = [x' | x' <- [2..x-1], x `mod` x' = 0]
 
 isPrime :: Int -> Bool
-isPrime x = [1, x] == divisors x
+isPrime x = null $ divisors x
 
 primes :: Int -> [Int]
-primes x = [x | x <- [1..x], prime x]
+primes x = [x | x <- [2..x], prime x]
 ```
 
 사실 하스켈을 처음 배울 때 정말로 이렇게 짧아질 수 있는지 싶어 놀라웠습니다.
@@ -177,35 +194,23 @@ xs = [(x, 8 / x) | x <- [1..8]]
 
 ```haskell
 
-divisors x = [x' | x' <- [1..x], x `mod` x' = 0]
-
 -- 제곱근 까지만 약수를 찾는 코드
-divisorsHalf x = [x' | x' <- [1..n], x `mod` x' == 0]
+divisorsHalf x = [x' | x' <- [2..n], x `mod` x' == 0]
     where n = round $ sqrt $ fromIntegral x / 1
 -- divisorsHalf 9 = [1, 3]
 
 -- 주어진 집합을 토대로 나머지 약수를 찾는 코드
-divisorsRest x xs = [x `div` x' | x' <- xs]
+divisorsRest x xs = [x `div` x' | x' <- xs, x'^2 /= x]
 
--- divisorsRest 9 $ divisorsHalf 9 = [9, 3]
+-- divisorsRest 9 $ divisorsHalf 9 = [9]
 ```
 
-문제는 두 결과물을 합치면 `[1, 3, 9, 3]`이 나오는데, 우리가 원하지 않는 결과입니다. 즉, 중복을 지워야 하죠. 이를 지우는 방법으로, Set을 이용하는 방법이 있겠지만, 여기에서는 리스트를 정렬하여 merge하는 것으로 만들어봅시다.
+두 결과물을 합쳐서 `[1, 3, 9]`를 만들어야 합니다.
+
+이제 이것을 가지고 divisors' 함수를 다시 구성해봅시다.
 
 ```hs
-merge xs ys = merge' acc xs' ys'
-    where xs' = sort xs
-          ys' = sort ys
-          merge' acc []     []                 = merge'
-          merge' acc []     (y:ys)             = merge' (acc ++ [y]) [] ys
-          merge' acc (x:xs) (y:ys) | x == y    = merge' (acc ++ [y]) [] ys
-                                   | otherwise = merge' (acc ++ [y]) [] ys
-```
-
-이제 이것을 가지고 divisors 함수를 다시 구성해봅시다.
-
-```hs
-divisors x = merge l r
+divisors' x = l ++ r
     where l = divisorsHalf x
           r = divisorsRest x l
 ```
@@ -218,7 +223,7 @@ divisors x = merge l r
 import qualified Data.HashSet as Set
 
 -- 제곱근 까지만 약수를 찾는 코드
-divisors'' x = Set.fromList $ concat [[x', x / x'] | x' <- [1..n], x `mod` x' == 0]
+divisors'' x = Set.fromList $ concat [[x', x / x'] | x' <- [2..n], x `mod` x' == 0]
     where n = round $ sqrt $ fromIntegral x / 1
 ```
 
