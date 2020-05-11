@@ -367,7 +367,7 @@ primes' = primeLoop [2..]
     where p x = trace ("{h = " ++ (show h) ++ ", x = " ++ (show x) ++ "}") (x `mod` h /= 0)
 ```
 
-이렇게 바꾸면 `take 5 primes'``` 라는 연산에 아래와 같은 결과물을 출력합니다.
+이렇게 바꾸면 `take 5 primes'` 라는 연산에 아래와 같은 결과물을 출력합니다.
 
 ```hs
 > take 5 primes'
