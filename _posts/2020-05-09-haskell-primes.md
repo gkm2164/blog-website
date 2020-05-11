@@ -348,6 +348,8 @@ takeWhile (<1000) primes'
 
 허허.. 저도 이거 하다가 놀랐네요.ㅋㅋㅋ 이렇게 DP가 쉽게 구현되었습니다.
 
+#### 말로만 듣던 Lazy Evaluation?
+
 한편, ```take n primes'```를 호출한 후, ```take (n + 1) primes'```를 호출하면, 실제 어떤 일이 일어날까요?
 `n + 1`번째 원소는 `take n`이 호출 될 시점엔 아무런 filter를 거치지 않고 있습니다. 하지만, `take (n + 1)`이 불리운다면, n번째 소수와 n + 1번째 소수 사이의 모든 수들이 앞에서 구해둔 소수들과의 나눗셈 작업을 시작하게 됩니다.
 
@@ -431,6 +433,15 @@ primes' = primeLoop [2..]
 앞에서 구해둔 소수가 10000개를 넘어간다면 10001번째 수는 10000번의 연산 작업을 통해 비교될 것입니다.
 
 추가로, 소수가 짝수인 경우는 2 말고는 없습니다. 따라서, 홀수들만 갖고 연산하도록 변경한다면 시간이 조금 더 개선될 것입니다.
+
+```hs
+primes' :: [Int]
+primes' = 2 : primeLoop [3, 5 ..]
+ where
+  primeLoop :: [Int] -> [Int]
+  primeLoop []       = []
+  primeLoop (h : xs) = h : primeLoop (filter (\x -> x `mod` h /= 0) xs)
+```
 
 지연된 연산(Lazy evaluation)이 이런식으로 동작하는건 또 처음 알았네요... 알면 알수록 신기한 하스켈 ㅋㅋ
 
