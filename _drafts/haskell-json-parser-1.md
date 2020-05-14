@@ -9,11 +9,7 @@ tags:
 
 # Introduction
 
-대개, 함수형 언어를 공부한다고 할 때 그것에 대한 적합한 예제를 찾기는 쉽지 않습니다. 여러 언어를 공부해본 결과, 예를들어 웹을 위한 백엔드를 개발한다 하면 보통은 Java를 많이 쓸 것입니다. 굳이 함수형을 쓴다고 하면 Play Framework, Akka가 있는 Scala가 있으며, 물론 표현력이 좋은것은 알겠으나, 이는 "서버를 함수형 언어로도 짤 수 있고, 다른 언어로 짠 것보다 훨씬 Reliable합니다!"라고 말하는 것과 비슷합니다. 결과적으로 함수형 언어는 데이터 처리에 용이한 언어가 되었고, 실제 웹과 관련한 분야에서는 Reactive 기법이 주로 쓰이겠으나, 이 역시나마 다른 언어, JavaScript(TypeScript) 에서 충분히 지원하고 있어 실제 함수형 언어가 쓰일 수 있는 곳은 드문 듯 합니다.
-
-Usually, when learning a programming language, especially functional one, it's hard to find a good example to study. Of course there is good toy examples. But in case of solving real problem, there are already good solutions outside. For example, when dealing with web services, just using Java is fine. Of course, there is Scala language you can use!
-
-If you can't emphasize with this, I'm sorry. Honestly, it's my story.
+(제 이야기입니다.)대개, 함수형 언어를 공부한다고 할 때 그것에 대한 적합한 예제를 찾기는 쉽지 않습니다. 여러 언어를 공부해본 결과, 예를들어 웹을 위한 백엔드를 개발한다 하면 보통은 Java를 많이 쓸 것입니다. 굳이 함수형을 쓴다고 하면 Play Framework, Akka가 있는 Scala가 있으며, 물론 표현력이 좋은것은 알겠으나, 이는 "서버를 함수형 언어로도 짤 수 있고, 다른 언어로 짠 것보다 훨씬 Reliable합니다!"라고 말하는 것과 비슷합니다. 결과적으로 함수형 언어는 데이터 처리에 용이한 언어가 되었고, 실제 웹과 관련한 분야에서는 Reactive 기법이 주로 쓰이겠으나, 이 역시나마 다른 언어, JavaScript(TypeScript) 에서 충분히 지원하고 있어 실제 함수형 언어가 쓰일 수 있는 곳은 드문 듯 합니다.
 
 여러가지를 고민해본 결과, 프로그래밍 언어 분야에서 파서를 개발하는 것이 조금은 쓸만해보였습니다. 파서는 주로 프로그래밍 언어를 분석하는 것에서 많이 쓰이지만, 본 문서에서는 모호한 표현이 상대적으로 적은 JSON Parser를 소개합니다.
 
@@ -52,7 +48,7 @@ null
 
 이 값 또한 유효합니다. 위 값들을 참조할 때는, JavaScript를 예로들면 아래와 같이 쓸 수 있습니다.
 
-```json
+```js
 var x = {
   "name": "Gyeongmin Go",
   "email": "gkm2164@gmail.com"
@@ -76,7 +72,7 @@ data JObject = JNumber Int
              | JNull
   deriving (Show, Eq, Ord)
 
-data JsonAssoc = (String, JObject)
+data JsonAssoc = (JString, JObject)
 ```
 
 바로 object로 들어가긴 조금 어렵기 때문에, 우선 null, true, false와 같은 키워드를 파싱하는 로직을 만들어봅시다. 우선, null 키워드를 처리하는 함수를 만들고 점차 refactoring 시켜보도록 하겠습니다.
@@ -109,7 +105,9 @@ parseNull "null   "
 
 그렇다면 true, false등도 아마 비슷한 방식으로 동작할 것입니다. 
 
-# 간단한 Parser
+한편, 예전에 LL(1)
+
+# Parsing
 
 우선 자료 구조를 정의해봅시다.
 
