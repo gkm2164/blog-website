@@ -1,3 +1,3 @@
 #!/bin/sh
 
-jekyll s --increment --drafts -P 3000
+bundle exec -- jekyll s --increment --drafts -P 3000
