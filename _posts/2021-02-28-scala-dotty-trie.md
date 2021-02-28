@@ -31,10 +31,13 @@ Trie는 문자열을 효과적으로 저장할 수 있는 자료구조 중 하�
 ```scala
 // Would not be compiled
 def toTrie(words: List[String]): Map[Char, ???] = 
-  words.groupBy(_.head)
+  words.filterNot(_.isEmpty)
+       .groupBy(_.head) // (1)
        .view
-       .mapValues(ws => toTrie(ws.map(_.tail).filterNot(_.isEmpty)))
+       .mapValues(ws => toTrie(ws.map(_.tail))) // (2)
 ```
+
+설명을 하자면, 주어진 문자열의 첫번쨰 글자로 group을 하면, 첫머리 글자를 key로 갖는 dictionary가 나옵니다. 이 작업을 (2)에서 재귀적으로 나머지 문자열 들에 대해서도 수행하는 작업입니다.
 
 보면, 재귀적인 Map의 구조를 취하고 있습니다. 문제는, 이 Map이 재귀적인 구조를 갖다보니, 자기 자신의 타입 또한 재귀적으로 처리가 어렵다는 점에 있습니다. 그래서, 위 코드를 컴파일 되게 하려면, ??? 에 Any를 넣어야 합니다.
 
@@ -46,15 +49,15 @@ def toTrie(words: List[String]): Map[Char, Any] =
        .mapValues(ws => toTrie(ws.map(_.tail).filterNot(_.isEmpty)))
 ```
 
-조금 더 심오하게 들어가보도록 하겠습니다. 재귀 타입을 가질 수 없다보니, 그럼, 이런건 어떨까요?
+사실 Any가 들어가면 만사 해결이 이루어지긴 하지만, 좋은 해결책이 아닙니다. 동적 타입이 아닌 언어에 대해서, 어떻게 하는게 좋을까 생각해보다가, 결국 아래의 문제를 해결하는 것이라는 결론이 생기더군요.
 
 ```scala
 type Trie = Map[Char, Trie]
 ```
 
-이러면 컴파일러가 자기 자신을 참조하는 타입이라며 컴파일을 거절합니다.
+개념적으로는, Trie는 재귀적 자료구조로, 문자를 키로 갖고, 하위로 자기 자신의 타입을 갖는 타입이지만, 이걸 컴파일 하려고 하면, 자기 자신을 참조하는 타입이라며 거절합니다.
 
-하지만 Scala 3는 이걸 해결할 수 있게 되었습니다.
+하지만 Scala 3는 어느정도 이걸 해결할 수 있게 되었습니다.
 
 # Scala 3로 Trie 구현
 
@@ -73,13 +76,25 @@ type Trie[A] = A match {
 
 ```scala
 // Would be compiled
-def toTrie(names: List[String]): Trie[Char] =
+def toTrie(names: List[String]): Trie[Char] = // (1)
   names.filterNot(_.isEmpty)
        .groupBy(_.head)
        .view
        .mapValues(x => toTrie(x.map(_.tail)))
        .toMap
 ```
+
+앞서 선언했던 `Trie[A]` 타입에 `Trie[Char]`를 넣고 수행한 결과입니다. 
+
+다시 위 타입 선언 코드를 살펴봅시다.
+
+```scala
+type Trie[A] = A match {
+  case Nothing => Nothing
+  case A => Map[A, Trie[A]] // 사실상 아무 타입..
+}
+```
+사실상 Nothing은 어떤 효과도 주진 않지만, 이렇게 함으로써 컴파일 타임에 타입이 결정되어버리는 현상을 막는 의도인 것 같습니다.
 
 우선 위의 사항을 종합해서, 코드를 만들어보면 아래와 같습니다.
 
@@ -88,7 +103,7 @@ object Main {
   type Trie[A] = A match {
     case Nothing => Nothing
     case A => Map[A, Trie[A]]
-    }
+  }
 
   def toTrie(names: List[String]): Trie[Char] =
     names.filterNot(_.isEmpty)
@@ -111,17 +126,18 @@ object Main {
 Map(h -> Map(e -> Map(l -> Map(l -> Map(o -> Map())), r -> Map(a -> Map(l -> Map(d -> Map())))), o -> Map(l -> Map(y -> Map()))), w -> Map(i -> Map(n -> Map(g -> Map())), o -> Map(r -> Map(l -> Map(d -> Map()), d -> Map()))))
 ```
 
-조금 알아보기 쉽게, 위 출력을 정리해본다면,
+Trie가 만들어진 것이 맞는지 좀 더 면밀히 보기 위해 출력을 아래와 같이 정리해봤습니다.
 
 ```
 Map(h -> Map(e -> Map(l -> Map(l -> Map(o -> Map())),
-                      r -> Map(a -> Map(l -> Map(d -> Map())))),
-         o -> Map(l -> Map(y -> Map()))),
-    w -> Map(i -> Map(n -> Map(g -> Map())),
-              o -> Map(r -> Map(l -> Map(d -> Map()),
-                            d -> Map()))))
+                      r -> Map(a -> Map(l -> Map(d -> Map())))), //(1)
+         o -> Map(l -> Map(y -> Map()))), // (2)
+    w -> Map(i -> Map(n -> Map(g -> Map())), // (3)
+              o -> Map(r -> Map(l -> Map(d -> Map()), // (4)
+                            d -> Map())))) // (5)
 ```
 
+우선, (1), (2), (3), (4), (5)를 보면, 가지가 필요한 시점에 잘 쳐진 것으로 보아, Trie가 잘 만들어진 것을 볼 수 있고,
 자연스럽게 마지막 Map()이 들어감으로써, 전체적인 구조를 잘 유지하고 있는 것을 알 수 있습니다.
 
 한편, 이렇게 Trie를 만들었으면 이제 쓸 수 있어야 하는데, insert, search등이 되면 좋겠다는 생각이 드네요. 그럼, Scala 3에서 소개하는 method extension기능을 사용해보도록 합시다.
